@@ -10,7 +10,7 @@ import { SCREEN_LOGICAL_W, SCREEN_LOGICAL_H } from '@/utils/screen';
  * Setiap frame: proyeksikan sudut mesh layar ke koordinat piksel canvas,
  * lalu atur translate + scale elemen overlay. Ikut bergerak saat kamera zoom.
  */
-export default function ScreenTracker({ screenRef, overlayRef }) {
+export default function ScreenTracker({ screenRef, overlayRef, visible = true }) {
   const bounds = useRef(null);
   const a = useRef(new THREE.Vector3());
   const b = useRef(new THREE.Vector3());
@@ -19,6 +19,11 @@ export default function ScreenTracker({ screenRef, overlayRef }) {
     const mesh = screenRef?.current;
     const el = overlayRef?.current;
     if (!mesh || !mesh.geometry || !el) return;
+
+    if (!visible) {
+      el.style.opacity = '0';
+      return;
+    }
 
     if (!bounds.current) {
       mesh.geometry.computeBoundingBox();

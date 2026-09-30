@@ -11,10 +11,12 @@ import ScreenTracker from './ScreenTracker';
 
 export default function ArcadeScene({
   zoomedIn = false,
+  intro = false,
   joystickDir = 'idle',
   isButtonPressed = false,
   screenRef,
   screenOverlayRef,
+  introScreenVisible = false,
   onPartPress,
 }) {
   return (
@@ -25,7 +27,7 @@ export default function ArcadeScene({
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         style={{ background: 'transparent' }}
       >
-        <ArcadeCamera zoomedIn={zoomedIn} />
+        <ArcadeCamera zoomedIn={zoomedIn} intro={intro} />
         <ArcadeLights />
 
         <Suspense fallback={null}>
@@ -52,7 +54,11 @@ export default function ArcadeScene({
         </Suspense>
 
         {/* Setelah kamera diupdate di frame yang sama */}
-        <ScreenTracker screenRef={screenRef} overlayRef={screenOverlayRef} />
+        <ScreenTracker
+          screenRef={screenRef}
+          overlayRef={screenOverlayRef}
+          visible={!intro || introScreenVisible}
+        />
       </Canvas>
     </div>
   );

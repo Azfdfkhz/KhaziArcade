@@ -11,6 +11,7 @@ export default function ArcadeInteraction({
   setSelectedIndex,
   onNavigate,
   started,
+  introActive = false,
   onStart,
   soundEnabled = true,
   setJoystickDir,
@@ -21,6 +22,8 @@ export default function ArcadeInteraction({
     (e) => {
       // Avoid intercepting if user is typing in an input
       if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
+
+      if (introActive) return;
 
       if (!started) {
         if (e.key === 'Enter' || e.key === ' ') {
@@ -104,6 +107,7 @@ export default function ArcadeInteraction({
       setSelectedIndex,
       onNavigate,
       started,
+      introActive,
       onStart,
       soundEnabled,
       setJoystickDir,

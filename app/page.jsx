@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import CRTOverlay from "@/components/ui/CRTOverlay";
+import OpeningReveal from "@/components/ui/OpeningReveal";
 import ArcadeScreen from "@/components/screen/ArcadeScreen";
 import AttractScreen from "@/components/screen/AttractScreen";
 import ControlDeck from "@/components/ui/ControlDeck";
@@ -22,6 +23,8 @@ const MENU_ITEMS = ["about", "projects", "skills", "experience", "contact"];
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
+  const [introActive, setIntroActive] = useState(false);
+  const [introScreenVisible, setIntroScreenVisible] = useState(false);
   const [started, setStarted] = useState(false);
   const [activeScreen, setActiveScreen] = useState("menu");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -38,15 +41,41 @@ export default function Home() {
 
   const handleLoadingComplete = useCallback(() => {
     setIsLoading(false);
+    setIntroScreenVisible(false);
+    setIntroActive(true);
   }, []);
 
+  // Play the opening cinematic once after the loading screen.
+  useEffect(() => {
+    if (!introActive) {
+      setIntroScreenVisible(false);
+      return;
+    }
+
+    const screenTimer = setTimeout(() => {
+      setIntroScreenVisible(true);
+    }, 3550);
+
+    const introTimer = setTimeout(() => {
+      setIntroActive(false);
+      setIntroScreenVisible(true);
+    }, 5350);
+
+    return () => {
+      clearTimeout(screenTimer);
+      clearTimeout(introTimer);
+    };
+  }, [introActive]);
+
   const handleStart = useCallback(() => {
+    if (introActive) return;
+
     setIsButtonPressed(true);
     setTimeout(() => setIsButtonPressed(false), 200);
     playSound("start", soundEnabled);
     setStarted(true);
     setActiveScreen("menu");
-  }, [soundEnabled]);
+  }, [soundEnabled, introActive]);
 
   const handleNavigate = useCallback(
     (screen) => {
@@ -126,6 +155,7 @@ export default function Home() {
         setSelectedIndex={setSelectedIndex}
         onNavigate={handleNavigate}
         started={started}
+        introActive={introActive}
         onStart={handleStart}
         soundEnabled={soundEnabled}
         setJoystickDir={setJoystickDir}
@@ -142,7 +172,11 @@ export default function Home() {
       {!isLoading && (
         <div className="relative w-full h-full flex flex-col justify-between">
           {/* ================= TOP NAVIGATION BAR (from Frame 1) ================= */}
-          <header className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-6 sm:px-10 py-5 pointer-events-none">
+          <header
+            className={`absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-6 sm:px-10 py-5 pointer-events-none transition-opacity duration-500 ${
+              introActive ? "opacity-0" : "opacity-100"
+            }`}
+          >
             {/* Logo */}
             <div className="pointer-events-auto cursor-pointer" onClick={handleHomeClick}>
               <h1 className="font-arcade text-[#237F85] text-base sm:text-lg tracking-widest font-bold">
@@ -210,10 +244,12 @@ export default function Home() {
           <div className="absolute inset-0 z-0">
             <ArcadeScene
               zoomedIn={started}
+              intro={introActive}
               joystickDir={joystickDir}
               isButtonPressed={isButtonPressed}
               screenRef={screenRef}
               screenOverlayRef={screenOverlayRef}
+              introScreenVisible={introScreenVisible}
               onPartPress={handlePartPress}
             />
           </div>
@@ -262,7 +298,7 @@ export default function Home() {
 
           {/* ================= DEKORASI SISI (tidak menutupi arcade) ================= */}
           <AnimatePresence>
-            {!started && (
+            {!started && !introActive && (
               <motion.div
                 className="absolute inset-0 pointer-events-none z-10"
                 initial={{ opacity: 0 }}
@@ -309,6 +345,11 @@ export default function Home() {
                 </footer>
               </motion.div>
             )}
+          </AnimatePresence>
+
+          {/* ================= OPENING CINEMATIC ================= */}
+          <AnimatePresence>
+            {introActive && <OpeningReveal />}
           </AnimatePresence>
 
           {/* ================= KONTROL KOMPAK (setelah START) ================= */}
