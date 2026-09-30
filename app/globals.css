@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'PressStart2P';
+  src: url('https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAQAu6jDQyK0nSgPJE4580w.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --color-turquoise: #63C8CC;
+  --color-deep-teal: #237F85;
+  --color-cream: #FFF3D6;
+  --color-warm-white: #F8F6EF;
+  --color-peach: #F29A8D;
+  --color-yellow: #F4C96B;
+  --color-dark: #263238;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--color-warm-white);
+  color: var(--color-dark);
+}
+
+.font-arcade {
+  font-family: 'PressStart2P', monospace;
+}
+
+/* Selection color */
+::selection {
+  background: var(--color-turquoise);
+  color: var(--color-cream);
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-turquoise);
+  border-radius: 4px;
+}
+
+/* Blinking animation for PRESS START */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.animate-blink {
+  animation: blink 1.2s ease-in-out infinite;
+}
+
+/* Screen glow */
+@keyframes screenGlow {
+  0%, 100% { box-shadow: 0 0 20px rgba(99, 200, 204, 0.15); }
+  50% { box-shadow: 0 0 30px rgba(99, 200, 204, 0.25); }
+}
+
+.screen-glow {
+  animation: screenGlow 3s ease-in-out infinite;
+}
