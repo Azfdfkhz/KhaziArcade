@@ -9,7 +9,8 @@ export default function ArcadeModel({
   zoomedIn = false,
   joystickDir = 'idle',
   isButtonPressed = false,
-  ...props
+  screenRef,
+  onPartPress,
 }) {
   const groupRef = useRef();
   const { scene } = useGLTF('/models/arcade.glb');
@@ -67,6 +68,11 @@ export default function ArcadeModel({
       }
     });
 
+    // Mesh layar: dipakai ScreenTracker untuk menempelkan UI tepat di layar
+    if (screenRef) {
+      screenRef.current = clonedScene.getObjectByName('Screen_Inner_Glow');
+    }
+
     // Locate interactive joystick (in updated GLB, shaft + ball is node Joystick_Right_Shaft)
     joystickShaft.current = clonedScene.getObjectByName('Joystick_Right_Shaft');
     if (joystickShaft.current && !initialJoystickRot.current) {
@@ -90,7 +96,7 @@ export default function ArcadeModel({
       .filter(Boolean);
 
     initialButtonPos.current = buttons.current.map((btn) => btn.position.clone());
-  }, [clonedScene]);
+  }, [clonedScene, screenRef]);
 
   // Animation frame
   useFrame((state) => {
@@ -143,8 +149,29 @@ export default function ArcadeModel({
     }
   });
 
+  // Tombol fisik di model 3D bisa diklik / disentuh
+  const isPressable = (name = '') =>
+    name.startsWith('Button_') ||
+    name.startsWith('Small_Button') ||
+    name.startsWith('Coin_Button');
+
   return (
-    <group ref={groupRef} position={[0, -1.1, 0]} {...props}>
+    <group
+      ref={groupRef}
+      position={[0, -1.1, 0]}
+      onClick={(e) => {
+        if (isPressable(e.object.name)) {
+          e.stopPropagation();
+          onPartPress?.(e.object.name);
+        }
+      }}
+      onPointerOver={(e) => {
+        if (isPressable(e.object.name)) document.body.style.cursor = 'pointer';
+      }}
+      onPointerOut={() => {
+        document.body.style.cursor = 'auto';
+      }}
+    >
       <primitive object={clonedScene} />
     </group>
   );

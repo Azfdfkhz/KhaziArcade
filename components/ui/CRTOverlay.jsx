@@ -5,7 +5,7 @@ export default function CRTOverlay() {
     <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg">
       {/* Scanlines */}
       <div
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.02]"
         style={{
           backgroundImage:
             'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.3) 2px, rgba(0,0,0,0.3) 4px)',
@@ -17,7 +17,7 @@ export default function CRTOverlay() {
         className="absolute inset-0"
         style={{
           background:
-            'radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.3) 100%)',
+            'radial-gradient(ellipse at center, transparent 70%, rgba(0,0,0,0.12) 100%)',
         }}
       />
 

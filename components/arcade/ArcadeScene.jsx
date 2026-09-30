@@ -7,18 +7,15 @@ import ArcadeModel from './ArcadeModel';
 import ArcadeLights from './ArcadeLights';
 import ArcadeCamera from './ArcadeCamera';
 import RoomEnvironment from './RoomEnvironment';
+import ScreenTracker from './ScreenTracker';
 
 export default function ArcadeScene({
   zoomedIn = false,
   joystickDir = 'idle',
   isButtonPressed = false,
-  started = false,
-  activeScreen = 'menu',
-  selectedIndex = 0,
-  onSelect,
-  onNavigate,
-  onStart,
-  horizontalNavTrigger,
+  screenRef,
+  screenOverlayRef,
+  onPartPress,
 }) {
   return (
     <div className="w-full h-full">
@@ -38,13 +35,8 @@ export default function ArcadeScene({
             zoomedIn={zoomedIn}
             joystickDir={joystickDir}
             isButtonPressed={isButtonPressed}
-            started={started}
-            activeScreen={activeScreen}
-            selectedIndex={selectedIndex}
-            onSelect={onSelect}
-            onNavigate={onNavigate}
-            onStart={onStart}
-            horizontalNavTrigger={horizontalNavTrigger}
+            screenRef={screenRef}
+            onPartPress={onPartPress}
           />
 
           <ContactShadows
@@ -58,6 +50,9 @@ export default function ArcadeScene({
 
           <Environment preset="city" environmentIntensity={0.35} />
         </Suspense>
+
+        {/* Setelah kamera diupdate di frame yang sama */}
+        <ScreenTracker screenRef={screenRef} overlayRef={screenOverlayRef} />
       </Canvas>
     </div>
   );
