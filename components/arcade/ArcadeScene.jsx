@@ -47,7 +47,7 @@ export default function ArcadeScene({
           <ArcadeGlow />
 
           <ContactShadows
-            position={[0, -1.1 + 0.09, 0]}
+            position={[0, -1 + 0.09, 0]}
             opacity={0.5}
             scale={10}
             blur={2.4}

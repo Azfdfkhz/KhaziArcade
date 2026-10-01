@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, MotionConfig } from "framer-motion";
 import LoadingScreen from "@/components/ui/LoadingScreen";
 import CRTOverlay from "@/components/ui/CRTOverlay";
 import OpeningReveal from "@/components/ui/OpeningReveal";
@@ -20,6 +20,18 @@ const ArcadeScene = dynamic(
 );
 
 const MENU_ITEMS = ["about", "projects", "skills", "experience", "contact"];
+
+const NAV_LINKS = [
+  { id: "home", label: "Home" },
+  { id: "about", label: "About" },
+  { id: "projects", label: "Projects" },
+  { id: "skills", label: "Skills" },
+  { id: "experience", label: "Experience" },
+  { id: "contact", label: "Contact" },
+];
+
+const ICON_BTN =
+  "w-9 h-9 rounded-full bg-white/70 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20 border border-[#237F85]/20 dark:border-[#63C8CC]/40 flex items-center justify-center text-sm shadow-sm transition-all cursor-pointer";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -170,6 +182,7 @@ export default function Home() {
   };
 
   return (
+    <MotionConfig reducedMotion="user">
     <main className={`${darkMode ? "dark " : ""}relative w-full h-dvh overflow-hidden bg-[#F8F6EF] dark:bg-[#04070b] font-sans select-none transition-colors duration-700`}>
       {/* Keyboard navigation & controller */}
       <ArcadeInteraction
@@ -197,98 +210,69 @@ export default function Home() {
         <div className="relative w-full h-full flex flex-col justify-between">
           {/* ================= TOP NAVIGATION BAR (from Frame 1) ================= */}
           <header
-            className={`absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-6 sm:px-10 py-5 pointer-events-none transition-opacity duration-500 ${
+            className={`absolute top-0 left-0 right-0 z-30 flex items-center justify-between gap-3 px-4 sm:px-10 py-4 sm:py-5 pointer-events-none transition-opacity duration-500 ${
               introActive ? "opacity-0" : "opacity-100"
             }`}
           >
+            <h1 className="sr-only">KHAZ Arcade — Interactive 3D Portfolio</h1>
+
             {/* Logo */}
-            <div className="pointer-events-auto cursor-pointer" onClick={handleHomeClick}>
-              <h1 className="font-arcade text-[#237F85] dark:text-[#63C8CC] dark:drop-shadow-[0_0_10px_rgba(99,200,204,0.8)] text-base sm:text-lg tracking-widest font-bold">
+            <button
+              type="button"
+              onClick={handleHomeClick}
+              aria-label="KHAZ — kembali ke awal"
+              className="pointer-events-auto text-left cursor-pointer rounded"
+            >
+              <span className="block font-arcade text-[#237F85] dark:text-[#63C8CC] dark:drop-shadow-[0_0_10px_rgba(99,200,204,0.8)] text-base sm:text-lg tracking-widest font-bold">
                 KHΔZ
-              </h1>
-              <p className="text-[10px] text-[#263238]/60 dark:text-[#FFF3D6]/55 tracking-wider font-mono">
+              </span>
+              <span className="block text-[11px] text-[#263238]/70 dark:text-[#FFF3D6]/60 tracking-wider">
                 Creative Developer
-              </p>
-            </div>
+              </span>
+            </button>
 
-            {/* Nav Links */}
-            <nav className="pointer-events-auto flex items-center gap-4 sm:gap-7 text-xs sm:text-sm font-medium text-[#263238]/80 dark:text-[#FFF3D6]/80 font-mono">
-              <button
-                onClick={handleHomeClick}
-                className={`hover:text-[#237F85] dark:hover:text-[#9be6e9] transition-colors cursor-pointer ${
-                  !started ? "text-[#237F85] dark:text-[#63C8CC] font-bold underline underline-offset-4" : ""
-                }`}
-              >
-                Home
-              </button>
-              <button
-                onClick={() => handleNavigate("about")}
-                className={`hover:text-[#237F85] dark:hover:text-[#9be6e9] transition-colors cursor-pointer ${
-                  started && activeScreen === "about"
-                    ? "text-[#237F85] dark:text-[#63C8CC] font-bold underline underline-offset-4"
-                    : ""
-                }`}
-              >
-                About
-              </button>
-              <button
-                onClick={() => handleNavigate("projects")}
-                className={`hover:text-[#237F85] dark:hover:text-[#9be6e9] transition-colors cursor-pointer ${
-                  started && activeScreen === "projects"
-                    ? "text-[#237F85] dark:text-[#63C8CC] font-bold underline underline-offset-4"
-                    : ""
-                }`}
-              >
-                Projects
-              </button>
-              <button
-                onClick={() => handleNavigate("skills")}
-                className={`hover:text-[#237F85] dark:hover:text-[#9be6e9] transition-colors cursor-pointer ${
-                  started && activeScreen === "skills"
-                    ? "text-[#237F85] dark:text-[#63C8CC] font-bold underline underline-offset-4"
-                    : ""
-                }`}
-              >
-                Skills
-              </button>
-              <button
-                onClick={() => handleNavigate("experience")}
-                className={`hover:text-[#237F85] dark:hover:text-[#9be6e9] transition-colors cursor-pointer ${
-                  started && activeScreen === "experience"
-                    ? "text-[#237F85] dark:text-[#63C8CC] font-bold underline underline-offset-4"
-                    : ""
-                }`}
-              >
-                Experience
-              </button>
-              <button
-                onClick={() => handleNavigate("contact")}
-                className={`hover:text-[#237F85] dark:hover:text-[#9be6e9] transition-colors cursor-pointer ${
-                  started && activeScreen === "contact"
-                    ? "text-[#237F85] dark:text-[#63C8CC] font-bold underline underline-offset-4"
-                    : ""
-                }`}
-              >
-                Contact
-              </button>
+            <nav aria-label="Main" className="pointer-events-auto flex items-center gap-2">
+              {/* Link teks hanya di layar lebar; di mobile navigasi lewat layar arcade & ControlDeck */}
+              <ul className="hidden md:flex items-center gap-7 mr-3 text-sm font-medium text-[#263238]/80 dark:text-[#FFF3D6]/80">
+                {NAV_LINKS.map(({ id, label }) => {
+                  const active = id === "home" ? !started : started && activeScreen === id;
+                  return (
+                    <li key={id}>
+                      <button
+                        type="button"
+                        onClick={() => (id === "home" ? handleHomeClick() : handleNavigate(id))}
+                        aria-current={active ? "page" : undefined}
+                        className={`hover:text-[#237F85] dark:hover:text-[#9be6e9] transition-colors cursor-pointer ${
+                          active
+                            ? "text-[#237F85] dark:text-[#63C8CC] font-bold underline underline-offset-4"
+                            : ""
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
 
-              {/* Dark Mode Toggle */}
               <button
+                type="button"
                 onClick={toggleDarkMode}
                 aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
                 aria-pressed={darkMode}
                 title={darkMode ? "Light Mode" : "Dark Mode"}
-                className="ml-2 w-8 h-8 rounded-full bg-white/70 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20 border border-[#237F85]/20 dark:border-[#63C8CC]/40 dark:shadow-[0_0_12px_rgba(99,200,204,0.45)] flex items-center justify-center text-xs shadow-sm transition-all cursor-pointer"
+                className={ICON_BTN}
               >
                 {darkMode ? "☀️" : "🌙"}
               </button>
 
-              {/* Sound Toggle */}
               <button
+                type="button"
                 onClick={toggleSound}
                 aria-label={soundEnabled ? "Mute sound" : "Enable sound"}
-                className="w-8 h-8 rounded-full bg-white/70 hover:bg-white dark:bg-white/10 dark:hover:bg-white/20 border border-[#237F85]/20 dark:border-[#63C8CC]/40 flex items-center justify-center text-xs shadow-sm transition-all cursor-pointer"
+                aria-pressed={soundEnabled}
                 title={soundEnabled ? "Mute Sound" : "Enable Sound"}
+                className={ICON_BTN}
               >
                 {soundEnabled ? "🔊" : "🔇"}
               </button>
@@ -387,14 +371,14 @@ export default function Home() {
                   </div>
                 </div>
 
-                <footer className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-6 sm:px-10 py-4 text-[11px] font-mono text-[#263238]/60 dark:text-[#FFF3D6]/55">
+                <footer className="absolute bottom-0 left-0 right-0 flex items-center justify-between px-6 sm:px-10 py-4 text-xs font-sans text-[#263238]/70 dark:text-[#FFF3D6]/60">
                   <span>Portfolio 2026</span>
                   <div className="flex items-center gap-2">
                     <span>Press Start / Enter</span>
                     <button
                       onClick={handleStart}
                       aria-label="Start"
-                      className="pointer-events-auto w-5 h-5 rounded-full border border-[#237F85] dark:border-[#63C8CC] flex items-center justify-center font-bold text-[9px] text-[#237F85] dark:text-[#63C8CC] hover:bg-[#237F85] hover:text-white transition-colors cursor-pointer"
+                      className="pointer-events-auto w-7 h-7 rounded-full border border-[#237F85] dark:border-[#63C8CC] flex items-center justify-center font-bold text-[11px] text-[#237F85] dark:text-[#63C8CC] hover:bg-[#237F85] hover:text-white transition-colors cursor-pointer"
                     >
                       O
                     </button>
@@ -421,5 +405,6 @@ export default function Home() {
         </div>
       )}
     </main>
+    </MotionConfig>
   );
 }

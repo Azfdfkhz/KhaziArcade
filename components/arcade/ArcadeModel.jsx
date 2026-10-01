@@ -5,10 +5,6 @@ import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 
-// GLB baru: mesin arcade (node ARCADE_MACHINE) sudah diputar 180° di dalam file
-// dan berada di x = -0.9114, z = -0.0234 di tengah kota (JP4_ROOT).
-// Offset ini memindahkan mesin ke titik (0, 0, 0) agar kamera, lampu, dan
-// ScreenTracker yang sudah ada tetap akurat tanpa perlu diubah.
 const MACHINE_OFFSET = [0.9114, 0, 0.0234];
 const FLOOR_Y = -1.1;
 

@@ -1,323 +1,153 @@
 'use client';
 
-import { motion, useAnimation } from 'framer-motion';
+import { useState, useEffect, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { skills } from '@/data/skills';
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useTrigger } from '@/hooks/useTrigger';
+import ScreenFrame from '@/components/ui/ScreenFrame';
+
+// Layar logis 500px, kartu aktif selalu di tengah.
+const SCREEN_W = 500;
+const CARD_W = 140;
+const GAP = 14;
+const STEP = CARD_W + GAP;
+const SIDE_PAD = (SCREEN_W - CARD_W) / 2;
 
 export default function SkillsScreen({ horizontalNavTrigger, onBack }) {
-  const controls = useAnimation();
   const [activeIndex, setActiveIndex] = useState(0);
-  const autoPlayRef = useRef(true);
+  const [autoPlay, setAutoPlay] = useState(true);
 
-  // Lebar card + gap
-  const cardWidth = 145;
-  const gap = 16;
-  const step = cardWidth + gap;
+  const go = useCallback((delta) => {
+    setActiveIndex((i) => (i + delta + skills.length) % skills.length);
+  }, []);
 
-  const scrollTo = useCallback((index) => {
-    setActiveIndex(index);
-    controls.start({
-      x: -(index * step),
-      transition: { duration: 0.5, ease: 'easeOut' },
-    });
-  }, [controls, step]);
+  useTrigger(horizontalNavTrigger, ({ direction }) => {
+    setAutoPlay(false);
+    go(direction === 'left' ? -1 : 1);
+  });
 
-  // Handle external horizontal nav from joystick/d-pad/keyboard
   useEffect(() => {
-    if (!horizontalNavTrigger) return;
-    autoPlayRef.current = false;
-    if (horizontalNavTrigger.direction === 'left') {
-      setActiveIndex((prev) => {
-        const next = (prev - 1 + skills.length) % skills.length;
-        controls.start({ x: -(next * step), transition: { duration: 0.4, ease: 'easeOut' } });
-        return next;
-      });
-    } else if (horizontalNavTrigger.direction === 'right') {
-      setActiveIndex((prev) => {
-        const next = (prev + 1) % skills.length;
-        controls.start({ x: -(next * step), transition: { duration: 0.4, ease: 'easeOut' } });
-        return next;
-      });
-    }
-  }, [horizontalNavTrigger, controls, step]);
+    if (!autoPlay) return;
 
-  // Auto-play interval
-  useEffect(() => {
-    let cancelled = false;
+    const timer = setInterval(() => go(1), 2800);
 
-    const timer = setInterval(() => {
-      if (cancelled || !autoPlayRef.current) return;
-      setActiveIndex((prev) => {
-        const next = (prev + 1) % skills.length;
-        controls.start({
-          x: -(next * step),
-          transition: { duration: 0.8, ease: 'easeInOut' },
-        });
-        return next;
-      });
-    }, 2800);
-
-    return () => {
-      cancelled = true;
-      clearInterval(timer);
-    };
-  }, [controls, step]);
+    return () => clearInterval(timer);
+  }, [autoPlay, go]);
 
   return (
-    <div className="relative w-full h-full overflow-hidden flex flex-col p-3.5 sm:p-5 text-[#FFF3D6] select-none font-mono">
+    <ScreenFrame
+      index="03 / 05"
+      title="POWER UPS"
+      subtitle="COLLECTED SKILLS"
+      footer={[
+        { label: '◀ ▶ BROWSE' },
+        { label: '● SELECT', accent: true },
+        { label: '◀ BACK', onClick: onBack },
+      ]}
+    >
+      {/* Skills Carousel */}
+      <div className="relative -mx-6 overflow-hidden py-3">
+        {/* Left fade */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-12 z-10 bg-gradient-to-r from-[#15484c] to-transparent" />
 
-      {/* HEADER */}
-      <div className="flex items-center justify-between border-b-2 border-[#63C8CC]/25 pb-2">
+        {/* Right fade */}
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-12 z-10 bg-gradient-to-l from-[#15484c] to-transparent" />
 
-        <span className="font-arcade text-[10px] sm:text-xs font-bold text-[#63C8CC]">
-          KHΔZ
-        </span>
-
-        <span className="font-arcade text-[9px] sm:text-[10px] font-bold text-[#F4C96B]">
-          03 / 05
-        </span>
-
-      </div>
-
-
-      {/* TITLE */}
-      <div className="text-center pt-2 pb-3">
-
-        <h2 className="font-arcade text-[12px] sm:text-sm font-bold tracking-[0.18em] text-[#F4C96B]">
-          POWER UPS
-        </h2>
-
-        <p className="font-mono text-[8px] sm:text-[9px] font-bold text-[#FFF3D6]/55 mt-1">
-          COLLECTED SKILLS
-        </p>
-
-      </div>
-
-
-      {/* CAROUSEL */}
-      <div className="relative flex-1 min-h-0 flex items-center overflow-hidden">
-
-        {/* LEFT FADE */}
-        <div className="
-          absolute
-          left-0
-          top-0
-          bottom-0
-          w-10
-          sm:w-14
-          z-20
-          pointer-events-none
-          bg-gradient-to-r
-          from-[#263238]
-          to-transparent
-        " />
-
-        {/* RIGHT FADE */}
-        <div className="
-          absolute
-          right-0
-          top-0
-          bottom-0
-          w-10
-          sm:w-14
-          z-20
-          pointer-events-none
-          bg-gradient-to-l
-          from-[#263238]
-          to-transparent
-        " />
-
-
-        {/* MOVING TRACK */}
-        <motion.div
-          animate={controls}
-          className="
-            flex
-            gap-4
-            px-4
-            sm:px-8
-            will-change-transform
-          "
+        <motion.ul
+          className="flex will-change-transform"
+          style={{
+            gap: GAP,
+            paddingLeft: SIDE_PAD,
+            paddingRight: SIDE_PAD,
+          }}
+          animate={{
+            x: -activeIndex * STEP,
+          }}
+          transition={{
+            duration: 0.45,
+            ease: 'easeOut',
+          }}
         >
+          {skills.map((skill, index) => {
+            const isActive = index === activeIndex;
+            const Icon = skill.icon;
 
-          {skills.map((skill, index) => (
-
-            <motion.div
-              key={skill.name}
-              className="
-                relative
-                flex-shrink-0
-                w-[125px]
-                h-[150px]
-                sm:w-[145px]
-                sm:h-[165px]
-                rounded-xl
-                bg-[#237F85]
-                border-2
-                border-[#63C8CC]/50
-                overflow-hidden
-              "
-              initial={{
-                opacity: 0,
-                scale: 0.8,
-              }}
-              animate={{
-                opacity: 1,
-                scale: 1,
-              }}
-              transition={{
-                delay: index * 0.08,
-                duration: 0.4,
-              }}
-            >
-
-              {/* GLOW */}
-              <div className="
-                absolute
-                -top-10
-                -right-10
-                w-24
-                h-24
-                rounded-full
-                bg-[#63C8CC]/15
-                blur-2xl
-              " />
-
-
-              {/* NUMBER */}
-              <div className="absolute top-2 left-2">
-
-                <span className="font-mono text-[8px] font-bold text-[#FFF3D6]/45">
+            return (
+              <motion.li
+                key={skill.name}
+                animate={{
+                  scale: isActive ? 1 : 0.86,
+                  opacity: isActive ? 1 : 0.5,
+                }}
+                transition={{
+                  duration: 0.3,
+                }}
+                style={{
+                  width: CARD_W,
+                }}
+                className={`relative shrink-0 h-[160px] rounded-xl bg-[#237F85] border-2 overflow-hidden flex flex-col items-center justify-center gap-2.5 ${
+                  isActive
+                    ? 'border-[#F4C96B] shadow-[0_0_18px_rgba(244,201,107,0.25)]'
+                    : 'border-[#63C8CC]/40'
+                }`}
+              >
+                {/* Skill Number */}
+                <span className="absolute top-2 left-2.5 font-arcade text-[9px] text-[#FFF3D6]/60">
                   #{String(index + 1).padStart(2, '0')}
                 </span>
 
-              </div>
+                {/* Skill Icon */}
+                <span
+                  className="w-16 h-16 rounded-full bg-[#263238] border-2 border-[#63C8CC] flex items-center justify-center"
+                  style={{
+                    boxShadow: isActive
+                      ? `0 0 14px ${skill.color}35`
+                      : 'none',
+                  }}
+                >
+                  <Icon
+                    size={34}
+                    strokeWidth={0.2}
+                    color={skill.color}
+                    aria-hidden="true"
+                  />
+                </span>
 
-
-              {/* ICON */}
-              <div className="relative flex justify-center pt-7">
-
-                <div className="
-                  w-14
-                  h-14
-                  sm:w-16
-                  sm:h-16
-                  rounded-full
-                  bg-[#263238]
-                  border-2
-                  border-[#63C8CC]
-                  flex
-                  items-center
-                  justify-center
-                  shadow-[0_0_14px_rgba(99,200,204,0.2)]
-                ">
-
-                  {skill.iconType === 'text' ? (
-                    <span className="font-arcade text-lg sm:text-xl font-bold text-[#F4C96B]">
-                      {skill.icon}
-                    </span>
-                  ) : (
-                    <span className="text-2xl sm:text-3xl">
-                      {skill.icon}
-                    </span>
-                  )}
-
-                </div>
-
-              </div>
-
-
-              {/* NAME */}
-              <div className="
-                absolute
-                left-2
-                right-2
-                bottom-9
-                text-center
-              ">
-
-                <span className="
-                  font-arcade
-                  text-[9px]
-                  sm:text-[10px]
-                  font-bold
-                  tracking-wider
-                  text-[#FFF3D6]
-                ">
+                {/* Skill Name */}
+                <span className="font-arcade text-[11px] tracking-wider text-[#FFF3D6]">
                   {skill.name}
                 </span>
 
-              </div>
-
-
-              {/* POWER BAR */}
-              <div className="absolute bottom-3 left-3 right-3">
-
-                <div className="h-1.5 bg-[#FFF3D6]/15 rounded-full overflow-hidden">
-
-                  <motion.div
-                    className="h-full bg-[#63C8CC]"
-                    initial={{ width: 0 }}
-                    animate={{
-                      width: `${Math.min(100, 60 + index * 5)}%`,
-                    }}
-                    transition={{
-                      delay: 0.5 + index * 0.08,
-                      duration: 0.7,
-                    }}
-                  />
-
-                </div>
-
-              </div>
-
-            </motion.div>
-
-          ))}
-
-        </motion.div>
-
+                {/* Category */}
+                <span className="text-[11px] text-[#FFF3D6]/70">
+                  {skill.category}
+                </span>
+              </motion.li>
+            );
+          })}
+        </motion.ul>
       </div>
 
-
-      {/* DOT INDICATOR */}
-      <div className="flex justify-center gap-1.5 py-2">
-        {skills.map((skill, index) => {
-          const isActive = index === activeIndex;
-          return (
-            <button
-              key={skill.name}
-              onClick={() => {
-                autoPlayRef.current = false;
-                scrollTo(index);
-              }}
-              aria-label={`Go to ${skill.name}`}
-              className={`w-2 h-2 rounded-full transition-all duration-200 cursor-pointer ${
-                isActive
-                  ? 'bg-[#F4C96B] scale-125 shadow-[0_0_8px_#F4C96B]'
-                  : 'bg-[#63C8CC]/30 hover:bg-[#63C8CC]/70'
-              }`}
-            />
-          );
-        })}
+      {/* Carousel Indicators */}
+      <div className="flex justify-center gap-2 pt-1">
+        {skills.map((skill, index) => (
+          <button
+            key={skill.name}
+            type="button"
+            onClick={() => {
+              setAutoPlay(false);
+              setActiveIndex(index);
+            }}
+            aria-label={`Go to ${skill.name}`}
+            aria-current={index === activeIndex ? 'true' : undefined}
+            className={`w-2.5 h-2.5 rounded-full transition-all duration-200 cursor-pointer ${
+              index === activeIndex
+                ? 'bg-[#F4C96B] scale-125'
+                : 'bg-[#63C8CC]/35 hover:bg-[#63C8CC]/70'
+            }`}
+          />
+        ))}
       </div>
-
-      {/* FOOTER */}
-      <div className="flex justify-center items-center gap-4 border-t-2 border-[#63C8CC]/20 pt-2">
-        <span className="font-arcade text-[7px] sm:text-[8px] font-bold text-[#FFF3D6]/60">
-          ◀ ▶ BROWSE
-        </span>
-        <span className="font-arcade text-[7px] sm:text-[8px] font-bold text-[#F4C96B]">
-          ● SELECT
-        </span>
-        <button
-          onClick={onBack}
-          className="font-arcade text-[7px] sm:text-[8px] font-bold text-[#FFF3D6]/60 hover:text-[#FFF3D6] transition-colors cursor-pointer"
-        >
-          ESC BACK
-        </button>
-      </div>
-
-    </div>
+    </ScreenFrame>
   );
 }

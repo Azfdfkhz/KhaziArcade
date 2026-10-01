@@ -31,7 +31,7 @@ export default function LoadingScreen({ onComplete }) {
       transition={{ duration: 0.5 }}
     >
       <motion.h1
-        className="text-[#FFF3D6] text-2xl sm:text-4xl font-bold tracking-[0.3em] mb-2"
+        className="font-arcade text-[#FFF3D6] text-lg sm:text-3xl tracking-[0.2em] mb-3"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
       >
@@ -39,7 +39,7 @@ export default function LoadingScreen({ onComplete }) {
       </motion.h1>
 
       <motion.p
-        className="text-[#63C8CC] text-xs sm:text-sm tracking-[0.2em] mb-8"
+        className="font-arcade text-[#63C8CC] text-[10px] sm:text-xs tracking-[0.2em] mb-8"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.3 }}
@@ -63,7 +63,7 @@ export default function LoadingScreen({ onComplete }) {
         ))}
       </motion.div>
 
-      <p className="text-[#FFF3D6]/40 text-[10px] sm:text-xs mt-3 tracking-wider">
+      <p className="font-arcade text-[#FFF3D6]/75 text-[10px] sm:text-xs mt-4 tracking-wider">
         {Math.floor(clampedProgress)}%
       </p>
     </motion.div>

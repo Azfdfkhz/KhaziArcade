@@ -3,14 +3,6 @@
 /* Mode gelap dikendalikan lewat class "dark" pada <main> */
 @custom-variant dark (&:where(.dark, .dark *));
 
-@font-face {
-  font-family: 'PressStart2P';
-  src: url('https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAQAu6jDQyK0nSgPJE4580w.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   --color-turquoise: #63C8CC;
   --color-deep-teal: #237F85;
@@ -36,7 +28,20 @@ body {
 }
 
 .font-arcade {
-  font-family: 'PressStart2P', monospace;
+  /* Font dimuat lewat <link> di layout.jsx (nama family: 'Press Start 2P') */
+  font-family: 'Press Start 2P', ui-monospace, monospace;
+}
+
+/* Fokus keyboard yang terlihat di semua elemen interaktif */
+:focus-visible {
+  outline: 2px solid #F4C96B;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-blink {
+    animation: none;
+  }
 }
 
 /* Selection color */

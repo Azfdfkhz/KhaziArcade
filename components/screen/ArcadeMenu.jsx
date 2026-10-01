@@ -1,70 +1,59 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import ScreenFrame from '@/components/ui/ScreenFrame';
 
 const menuItems = [
-  { id: 'about', label: 'ABOUT ME', icon: '📁', number: '01/05' },
-  { id: 'projects', label: 'PROJECTS', icon: '📁', number: '02/05' },
-  { id: 'skills', label: 'SKILLS', icon: '📁', number: '03/05' },
-  { id: 'experience', label: 'EXPERIENCE', icon: '📁', number: '04/05' },
-  { id: 'contact', label: 'CONTACT', icon: '📁', number: '05/05' },
+  { id: 'about', label: 'ABOUT ME', icon: '📁' },
+  { id: 'projects', label: 'PROJECTS', icon: '📁' },
+  { id: 'skills', label: 'SKILLS', icon: '📁' },
+  { id: 'experience', label: 'EXPERIENCE', icon: '📁' },
+  { id: 'contact', label: 'CONTACT', icon: '📁' },
 ];
 
 export default function ArcadeMenu({ selectedIndex, onSelect }) {
   return (
-    <div className="w-full h-full flex flex-col justify-between p-4 sm:p-6 text-[#FFF3D6] select-none">
-      {/* Top Header */}
-      <div className="flex items-center justify-between text-[9px] sm:text-[10px] text-[#63C8CC] font-arcade tracking-wider border-b border-[#63C8CC]/20 pb-2">
-        <span>KHΔZ</span>
-        <span className="text-[#F4C96B]">MENU</span>
-      </div>
-
-      {/* Title */}
-      <div className="text-center my-auto py-2">
-        <h2 className="font-arcade text-[#F4C96B] text-xs sm:text-sm tracking-[0.25em] mb-4 sm:mb-6 uppercase">
-          SELECT CATEGORY
-        </h2>
-
-        {/* Menu Items */}
-        <div className="space-y-1.5 sm:space-y-2 w-full max-w-[280px] sm:max-w-[320px] mx-auto">
-          {menuItems.map((item, index) => {
-            const isSelected = selectedIndex === index;
-            return (
-              <motion.button
-                key={item.id}
-                onClick={() => onSelect(index)}
-                className={`w-full text-left px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm transition-all duration-150 flex items-center justify-between group cursor-pointer ${
-                  isSelected
-                    ? 'bg-[#237F85] text-[#FFF3D6] font-bold shadow-md border border-[#63C8CC]/60'
-                    : 'text-[#FFF3D6]/70 hover:text-[#FFF3D6] hover:bg-white/5 border border-transparent'
-                }`}
-                whileHover={{ x: 3 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                <div className="flex items-center gap-2.5">
-                  <span className={`text-[10px] ${isSelected ? 'text-[#63C8CC]' : 'opacity-0'}`}>
-                    ▶
-                  </span>
-                  <span className="text-sm">{item.icon}</span>
-                  <span className="font-arcade text-[10px] sm:text-xs tracking-wider">
-                    {item.label}
-                  </span>
-                </div>
-                <span className="font-mono text-[9px] text-[#63C8CC]/70 opacity-60 group-hover:opacity-100">
-                  {item.number}
+    <ScreenFrame
+      index="MENU"
+      title="SELECT CATEGORY"
+      footer={[{ label: '↑ ↓ MOVE' }, { label: '● SELECT', accent: true }, { label: '◀ BACK' }]}
+    >
+      <div className="w-full max-w-[340px] mx-auto space-y-2 py-2">
+        {menuItems.map((item, index) => {
+          const isSelected = selectedIndex === index;
+          return (
+            <motion.button
+              key={item.id}
+              type="button"
+              onClick={() => onSelect(index)}
+              aria-current={isSelected ? 'true' : undefined}
+              className={`w-full flex items-center justify-between px-4 py-2.5 rounded-lg border transition-colors duration-150 cursor-pointer ${
+                isSelected
+                  ? 'bg-[#237F85] text-[#FFF3D6] border-[#63C8CC]/70 shadow-md'
+                  : 'text-[#FFF3D6]/75 border-transparent hover:bg-white/5 hover:text-[#FFF3D6]'
+              }`}
+              whileHover={{ x: 3 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <span className="flex items-center gap-3">
+                <span
+                  aria-hidden="true"
+                  className={`w-3 text-[11px] ${isSelected ? 'text-[#F4C96B]' : 'opacity-0'}`}
+                >
+                  ➜ 
                 </span>
-              </motion.button>
-            );
-          })}
-        </div>
+                <span aria-hidden="true" className="text-base leading-none">
+                  {item.icon}
+                </span>
+                <span className="font-arcade text-[12px] tracking-wider">{item.label}</span>
+              </span>
+              <span className="font-arcade text-[10px] text-[#63C8CC]/80">
+                0{index + 1}/05
+              </span>
+            </motion.button>
+          );
+        })}
       </div>
-
-      {/* Footer controls hint */}
-      <div className="flex justify-center items-center gap-4 text-[8px] sm:text-[9px] text-[#FFF3D6]/50 font-arcade tracking-wider border-t border-[#63C8CC]/20 pt-2.5">
-        <span>↑ ↓ MOVE</span>
-        <span>● SELECT</span>
-        <span>◀ BACK</span>
-      </div>
-    </div>
+    </ScreenFrame>
   );
 }

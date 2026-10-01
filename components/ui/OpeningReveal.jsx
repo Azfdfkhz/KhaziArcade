@@ -67,8 +67,8 @@ export default function OpeningReveal() {
         animate={{ opacity: [1, 1, 0], scale: [1, 1, 1.08] }}
         transition={{ delay: 0.1, duration: 1.75, times: [0, 0.35, 1], ease }}
       >
-        <p className="text-[9px] tracking-[0.4em] text-[#63C8CC]">KHAZ SYSTEM</p>
-        <p className="mt-2 text-[8px] tracking-[0.25em] text-[#FFF3D6]/45">LOADING SPACE</p>
+        <p className="text-[11px] tracking-[0.4em] text-[#63C8CC]">KHAZ SYSTEM</p>
+        <p className="mt-2 text-[10px] tracking-[0.25em] text-[#FFF3D6]/60">LOADING SPACE</p>
       </motion.div>
 
       {/* Title appears only after the camera has pushed through the layers. */}
@@ -78,8 +78,8 @@ export default function OpeningReveal() {
         animate={{ opacity: [0, 1, 1, 0], scale: [0.94, 1, 1.02, 1.05], y: [8, 0, 0, -6] }}
         transition={{ delay: 2.05, duration: 1.55, times: [0, 0.18, 0.7, 1], ease }}
       >
-        <p className="font-mono text-[8px] tracking-[0.5em] text-[#63C8CC] mb-2">WELCOME TO</p>
-        <h2 className="font-arcade text-[#FFF3D6] text-3xl sm:text-5xl tracking-[0.14em] drop-shadow-[0_0_22px_rgba(99,200,204,0.35)]">
+        <p className="font-mono text-[11px] tracking-[0.5em] text-[#63C8CC] mb-3">WELCOME TO</p>
+        <h2 className="font-arcade text-[#FFF3D6] text-xl sm:text-4xl md:text-5xl tracking-[0.12em] drop-shadow-[0_0_22px_rgba(99,200,204,0.35)]">
           KHAZ ARCADE
         </h2>
       </motion.div>

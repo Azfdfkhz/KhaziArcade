@@ -66,16 +66,16 @@ export default function ArcadeLights() {
       <directionalLight ref={setRef('rim')} position={[0, 4, -4]} intensity={0.7} color="#F29A8D" />
 
       {/* Screen glow */}
-      <pointLight ref={setRef('screen')} position={[0, 0.45, 0.65]} intensity={0.8} color="#63C8CC" distance={3.2} decay={2} />
+      <pointLight ref={setRef('screen')} position={[0, 0.25, 0.35]} intensity={0.8} color="#63C8CC" distance={1.2} decay={2} />
 
       {/* Marquee glow */}
-      <pointLight ref={setRef('marquee')} position={[0, 1.05, 0.6]} intensity={0.4} color="#FFF3D6" distance={2.6} decay={2} />
+      <pointLight ref={setRef('marquee')} position={[0, 0.5, 0.6]} intensity={0.4} color="#FFF3D6" distance={1} decay={2} />
 
       {/* ===== Lampu neon khusus mode gelap ===== */}
-      <pointLight ref={setRef('neonCyan')} position={[-1.0, -0.5, 1.0]} intensity={0} color="#63C8CC" distance={5} decay={2} />
-      <pointLight ref={setRef('neonPeach')} position={[1.0, -0.5, 1.0]} intensity={0} color="#F29A8D" distance={5} decay={2} />
+      <pointLight ref={setRef('neonCyan')} position={[-1.0, -0.5, 1.0]} intensity={0} color="#63C8CC" distance={1} decay={2} />
+      <pointLight ref={setRef('neonPeach')} position={[1.0, -0.9, 1.0]} intensity={0} color="#F29A8D" distance={2} decay={2} />
       {/* Menyinari dinding gedung di belakang mesin agar ada aura di sekelilingnya */}
-      <pointLight ref={setRef('wall')} position={[0, 0.6, -0.4]} intensity={0} color="#3FD0D6" distance={4.5} decay={2} />
+      <pointLight ref={setRef('wall')} position={[0, 0.2, -1.0]} intensity={0} color="#3FD0D6" distance={4.5} decay={2} />
     </>
   );
 }

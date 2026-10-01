@@ -58,7 +58,7 @@ export default function ArcadeScreen({
   };
 
   return (
-    <div className="w-full h-full flex flex-col font-mono select-none">
+    <div className="w-full h-full flex flex-col font-sans select-none">
       <AnimatePresence mode="wait">
         <motion.div
           key={activeScreen}
