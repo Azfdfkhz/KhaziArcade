@@ -34,6 +34,7 @@ export default function Home() {
   const [joystickDir, setJoystickDir] = useState("idle");
   const [isButtonPressed, setIsButtonPressed] = useState(false);
   const [horizontalNavTrigger, setHorizontalNavTrigger] = useState(null);
+  const [selectTrigger, setSelectTrigger] = useState(null);
 
   // Ref mesh layar 3D & elemen overlay UI (dihubungkan oleh ScreenTracker)
   const screenRef = useRef(null);
@@ -54,12 +55,12 @@ export default function Home() {
 
     const screenTimer = setTimeout(() => {
       setIntroScreenVisible(true);
-    }, 3550);
+    }, 2750);
 
     const introTimer = setTimeout(() => {
       setIntroActive(false);
       setIntroScreenVisible(true);
-    }, 5350);
+    }, 3650);
 
     return () => {
       clearTimeout(screenTimer);
@@ -130,7 +131,11 @@ export default function Home() {
 
   const pressSelect = () => {
     flashButton();
-    if (activeScreen === "menu") handleMenuSelect(selectedIndex);
+    if (activeScreen === "menu") {
+      handleMenuSelect(selectedIndex);
+    } else {
+      setSelectTrigger({ timestamp: Date.now() });
+    }
   };
 
   const pressBack = () => {
@@ -161,6 +166,7 @@ export default function Home() {
         setJoystickDir={setJoystickDir}
         setIsButtonPressed={setIsButtonPressed}
         onHorizontalNav={handleHorizontalNav}
+        onSelectKey={pressSelect}
       />
 
       {/* Loading Screen */}
@@ -216,6 +222,26 @@ export default function Home() {
                 }`}
               >
                 Projects
+              </button>
+              <button
+                onClick={() => handleNavigate("skills")}
+                className={`hover:text-[#237F85] transition-colors cursor-pointer ${
+                  started && activeScreen === "skills"
+                    ? "text-[#237F85] font-bold underline underline-offset-4"
+                    : ""
+                }`}
+              >
+                Skills
+              </button>
+              <button
+                onClick={() => handleNavigate("experience")}
+                className={`hover:text-[#237F85] transition-colors cursor-pointer ${
+                  started && activeScreen === "experience"
+                    ? "text-[#237F85] font-bold underline underline-offset-4"
+                    : ""
+                }`}
+              >
+                Experience
               </button>
               <button
                 onClick={() => handleNavigate("contact")}
@@ -277,6 +303,7 @@ export default function Home() {
                       selectedIndex={selectedIndex}
                       onSelect={handleMenuSelect}
                       horizontalNavTrigger={horizontalNavTrigger}
+                      selectTrigger={selectTrigger}
                     />
                   </motion.div>
                 ) : (

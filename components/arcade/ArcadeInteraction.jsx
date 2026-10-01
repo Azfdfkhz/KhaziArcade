@@ -17,6 +17,7 @@ export default function ArcadeInteraction({
   setJoystickDir,
   setIsButtonPressed,
   onHorizontalNav,
+  onSelectKey,
 }) {
   const handleKeyDown = useCallback(
     (e) => {
@@ -84,6 +85,7 @@ export default function ArcadeInteraction({
             onNavigate(MENU_ITEMS[selectedIndex]);
           } else {
             playSound('select', soundEnabled);
+            if (onSelectKey) onSelectKey();
           }
           break;
 
@@ -113,6 +115,7 @@ export default function ArcadeInteraction({
       setJoystickDir,
       setIsButtonPressed,
       onHorizontalNav,
+      onSelectKey,
     ]
   );
 

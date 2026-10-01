@@ -15,14 +15,22 @@ const images = [
   '/images/profile-2.jpg',
 ];
 
-export default function AboutScreen() {
+export default function AboutScreen({ horizontalNavTrigger, onBack }) {
   const [imageIndex, setImageIndex] = useState(0);
+  const [imageError, setImageError] = useState({});
 
-  // Ganti gambar setiap 4 detik
+  useEffect(() => {
+    if (!horizontalNavTrigger) return;
+    if (horizontalNavTrigger.direction === 'left' || horizontalNavTrigger.direction === 'right') {
+      setImageIndex((prev) => (prev + 1) % images.length);
+    }
+  }, [horizontalNavTrigger]);
+
+  // Ganti gambar otomatis setiap 5 detik
   useEffect(() => {
     const interval = setInterval(() => {
       setImageIndex((prev) => (prev + 1) % images.length);
-    }, 4000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
@@ -61,7 +69,7 @@ export default function AboutScreen() {
           </div>
 
           <span className="font-arcade text-[9px] sm:text-[10px] font-bold text-[#F4C96B]">
-            02 / 05
+            01 / 05
           </span>
 
         </div>
@@ -69,21 +77,21 @@ export default function AboutScreen() {
 
         {/* ================= TITLE ================= */}
 
-        <div className="text-center py-3">
+        <div className="text-center py-1.5">
 
-          <h2 className="font-arcade text-[13px] sm:text-base font-bold tracking-[0.12em] text-[#F4C96B]">
+          <h2 className="font-arcade text-[12px] sm:text-sm font-bold tracking-[0.12em] text-[#F4C96B]">
             CHARACTER SELECT
           </h2>
 
-          <div className="flex justify-center items-center gap-2 mt-1">
+          <div className="flex justify-center items-center gap-2 mt-0.5">
 
-            <span className="h-[2px] w-8 bg-[#63C8CC]" />
+            <span className="h-[2px] w-6 bg-[#63C8CC]" />
 
-            <span className="font-mono text-[8px] sm:text-[9px] font-bold text-[#63C8CC]">
+            <span className="font-mono text-[7.5px] sm:text-[8.5px] font-bold text-[#63C8CC]">
               PLAYER PROFILE
             </span>
 
-            <span className="h-[2px] w-8 bg-[#63C8CC]" />
+            <span className="h-[2px] w-6 bg-[#63C8CC]" />
 
           </div>
 
@@ -111,35 +119,54 @@ export default function AboutScreen() {
               <div className="relative w-full h-full overflow-hidden bg-[#237F85]">
 
                 <AnimatePresence mode="wait">
-
-                  <motion.img
-                    key={images[imageIndex]}
-                    src={images[imageIndex]}
-                    alt="Khaz"
-                    initial={{
-                      opacity: 0,
-                      scale: 1.04,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      scale: 1,
-                    }}
-                    exit={{
-                      opacity: 0,
-                      scale: 0.98,
-                    }}
-                    transition={{
-                      duration: 0.65,
-                      ease: 'easeInOut',
-                    }}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-
+                  {images[imageIndex] && !imageError[imageIndex] ? (
+                    <motion.img
+                      key={images[imageIndex]}
+                      src={images[imageIndex]}
+                      alt="Khaz"
+                      onError={() => {
+                        setImageError((prev) => ({ ...prev, [imageIndex]: true }));
+                      }}
+                      initial={{
+                        opacity: 0,
+                        scale: 1.04,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        scale: 1,
+                      }}
+                      exit={{
+                        opacity: 0,
+                        scale: 0.98,
+                      }}
+                      transition={{
+                        duration: 0.65,
+                        ease: 'easeInOut',
+                      }}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  ) : (
+                    <motion.div
+                      key={`fallback-${imageIndex}`}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-[#237F85] to-[#15484c] text-center p-2"
+                    >
+                      <div className="w-14 h-14 rounded-full bg-[#18393d] border-2 border-[#63C8CC] flex items-center justify-center shadow-[0_0_12px_rgba(99,200,204,0.3)] mb-1">
+                        <span className="text-3xl">🧑‍💻</span>
+                      </div>
+                      <span className="font-arcade text-[8px] text-[#F4C96B] tracking-wider font-bold">
+                        KHAZ
+                      </span>
+                      <span className="font-mono text-[6.5px] text-[#63C8CC] mt-0.5">
+                        DEV / 3D
+                      </span>
+                    </motion.div>
+                  )}
                 </AnimatePresence>
 
-
                 {/* Image overlay */}
-
                 <div className="absolute inset-0 bg-[#63C8CC]/5 pointer-events-none" />
 
 
@@ -247,22 +274,22 @@ export default function AboutScreen() {
 
         {/* ================= STATS ================= */}
 
-        <div className="border-2 border-[#63C8CC]/25 bg-[#000]/10 rounded-md px-3 py-2.5 mt-2">
+        <div className="border-2 border-[#63C8CC]/25 bg-[#000]/15 rounded-md px-2.5 py-2 mt-1.5">
 
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-1.5">
 
-            <span className="font-arcade text-[8px] sm:text-[9px] font-bold tracking-wider text-[#63C8CC]">
+            <span className="font-arcade text-[7.5px] sm:text-[8.5px] font-bold tracking-wider text-[#63C8CC]">
               PLAYER STATS
             </span>
 
-            <span className="font-mono text-[8px] font-bold text-[#F4C96B]">
+            <span className="font-mono text-[7.5px] font-bold text-[#F4C96B]">
               LEVEL 01
             </span>
 
           </div>
 
 
-          <div className="space-y-2">
+          <div className="space-y-1.5">
 
             {stats.map((stat) => (
 
@@ -322,19 +349,23 @@ export default function AboutScreen() {
         {/* ================= FOOTER ================= */}
 
         <div className="flex justify-between items-center pt-2">
-
-          <span className="font-arcade text-[7px] sm:text-[8px] font-bold text-[#FFF3D6]/60">
+          <button
+            onClick={() => setImageIndex((p) => (p + 1) % images.length)}
+            className="font-arcade text-[7px] sm:text-[8px] font-bold text-[#FFF3D6]/60 hover:text-[#FFF3D6] transition-colors cursor-pointer"
+          >
             ◀ ▶ CHANGE
-          </span>
+          </button>
 
           <span className="font-arcade text-[7px] sm:text-[8px] font-bold text-[#F4C96B]">
-            ● SELECT
+            ● ACTIVE
           </span>
 
-          <span className="font-arcade text-[7px] sm:text-[8px] font-bold text-[#FFF3D6]/60">
+          <button
+            onClick={onBack}
+            className="font-arcade text-[7px] sm:text-[8px] font-bold text-[#FFF3D6]/60 hover:text-[#FFF3D6] transition-colors cursor-pointer"
+          >
             ESC BACK
-          </span>
-
+          </button>
         </div>
 
       </div>

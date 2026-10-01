@@ -9,7 +9,7 @@ const socialLinks = [
   { name: 'Instagram', icon: '📷', url: 'https://instagram.com' },
 ];
 
-export default function ContactScreen() {
+export default function ContactScreen({ onBack }) {
   return (
     <div className="w-full h-full flex flex-col justify-between p-3.5 sm:p-5 text-[#FFF3D6] select-none font-mono">
       {/* Top Header */}
@@ -64,8 +64,13 @@ export default function ContactScreen() {
 
       {/* Footer controls hint */}
       <div className="flex justify-center items-center gap-4 text-[8px] sm:text-[9px] text-[#FFF3D6]/50 font-arcade tracking-wider border-t border-[#63C8CC]/20 pt-2">
-        <span>◀ ▶ BACK</span>
-        <span>● SELECT</span>
+        <button
+          onClick={onBack}
+          className="hover:text-[#FFF3D6] transition-colors cursor-pointer"
+        >
+          ◀ BACK
+        </button>
+        <span className="text-[#F4C96B]">● CONNECT</span>
       </div>
     </div>
   );

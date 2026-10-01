@@ -20,26 +20,38 @@ export default function ArcadeScreen({
   selectedIndex,
   onSelect,
   horizontalNavTrigger,
+  selectTrigger,
 }) {
   const renderScreen = () => {
     switch (activeScreen) {
       case 'menu':
         return <ArcadeMenu selectedIndex={selectedIndex} onSelect={onSelect} />;
       case 'about':
-        return <AboutScreen />;
+        return (
+          <AboutScreen
+            horizontalNavTrigger={horizontalNavTrigger}
+            onBack={() => onNavigate('menu')}
+          />
+        );
       case 'projects':
         return (
           <ProjectsScreen
             onBack={() => onNavigate('menu')}
             horizontalNavTrigger={horizontalNavTrigger}
+            selectTrigger={selectTrigger}
           />
         );
       case 'skills':
-        return <SkillsScreen />;
+        return (
+          <SkillsScreen
+            horizontalNavTrigger={horizontalNavTrigger}
+            onBack={() => onNavigate('menu')}
+          />
+        );
       case 'experience':
-        return <ExperienceScreen />;
+        return <ExperienceScreen onBack={() => onNavigate('menu')} />;
       case 'contact':
-        return <ContactScreen />;
+        return <ContactScreen onBack={() => onNavigate('menu')} />;
       default:
         return <ArcadeMenu selectedIndex={selectedIndex} onSelect={onSelect} />;
     }

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { projects } from '@/data/projects';
 
-export default function ProjectsScreen({ onBack, horizontalNavTrigger }) {
+export default function ProjectsScreen({ onBack, horizontalNavTrigger, selectTrigger }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showDetail, setShowDetail] = useState(false);
   const project = projects[currentIndex];
@@ -25,6 +25,12 @@ export default function ProjectsScreen({ onBack, horizontalNavTrigger }) {
       next();
     }
   }, [horizontalNavTrigger, next, prev]);
+
+  // Respond to SELECT button / Enter key
+  useEffect(() => {
+    if (!selectTrigger) return;
+    setShowDetail((prev) => !prev);
+  }, [selectTrigger]);
 
   // Frame 5: Project Detail View
   if (showDetail) {
@@ -217,9 +223,19 @@ export default function ProjectsScreen({ onBack, horizontalNavTrigger }) {
 
       {/* Footer controls hint */}
       <div className="flex justify-center items-center gap-4 text-[8px] sm:text-[9px] text-[#FFF3D6]/50 font-arcade tracking-wider border-t border-[#63C8CC]/20 pt-2">
-        <span>↑ ↓ SELECT</span>
-        <span>● PLAY</span>
-        <span>◀ BACK</span>
+        <span>◀ ▶ BROWSE</span>
+        <button
+          onClick={() => setShowDetail(true)}
+          className="hover:text-[#F4C96B] transition-colors cursor-pointer"
+        >
+          ● OPEN
+        </button>
+        <button
+          onClick={onBack}
+          className="hover:text-[#FFF3D6] transition-colors cursor-pointer"
+        >
+          ESC BACK
+        </button>
       </div>
     </div>
   );

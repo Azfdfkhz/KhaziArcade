@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { experiences } from '@/data/experience';
 
-export default function ExperienceScreen() {
+export default function ExperienceScreen({ onBack }) {
   return (
     <div className="w-full h-full flex flex-col justify-between p-3.5 sm:p-5 text-[#FFF3D6] select-none font-mono">
       {/* Top Header */}
@@ -53,8 +53,13 @@ export default function ExperienceScreen() {
       {/* Footer controls hint */}
       <div className="flex justify-center items-center gap-4 text-[8px] sm:text-[9px] text-[#FFF3D6]/50 font-arcade tracking-wider border-t border-[#63C8CC]/20 pt-2">
         <span>↑ ↓ MOVE</span>
-        <span>● SELECT</span>
-        <span>◀ BACK</span>
+        <span className="text-[#F4C96B]">● TIMELINE</span>
+        <button
+          onClick={onBack}
+          className="hover:text-[#FFF3D6] transition-colors cursor-pointer"
+        >
+          ◀ BACK
+        </button>
       </div>
     </div>
   );

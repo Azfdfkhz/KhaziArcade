@@ -9,9 +9,9 @@ const FOV = 45;
 const TAN_HALF_FOV = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
 const SCREEN_Z = 0.45;
 
-const INTRO_DURATION = 5.05;
-const INTRO_START_ANGLE = -Math.PI * 1.28;
-const INTRO_END_ANGLE = -0.035;
+const INTRO_DURATION = 3.65;
+const INTRO_START_ANGLE = -Math.PI * 1.18;
+const INTRO_END_ANGLE = -0.02;
 
 function smoothDamp(t) {
   return THREE.MathUtils.smootherstep(t, 0, 1);
@@ -75,8 +75,8 @@ export default function ArcadeCamera({ zoomedIn = false, intro = false }) {
       // A broad, continuous orbit with a tiny push-in. Avoid abrupt direction changes.
       const angle = THREE.MathUtils.lerp(INTRO_START_ANGLE, INTRO_END_ANGLE, eased);
       const orbitWave = cinematicSine(progress);
-      const radius = THREE.MathUtils.lerp(6.0, 4.65, eased) + orbitWave * 0.18;
-      const height = THREE.MathUtils.lerp(0.52, 0.38, eased) + orbitWave * 0.10;
+      const radius = THREE.MathUtils.lerp(5.8, 4.45, eased) + orbitWave * 0.14;
+      const height = THREE.MathUtils.lerp(0.50, 0.38, eased) + orbitWave * 0.07;
 
       introPosition.current.set(
         Math.sin(angle) * radius,

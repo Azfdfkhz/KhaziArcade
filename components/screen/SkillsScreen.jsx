@@ -2,61 +2,64 @@
 
 import { motion, useAnimation } from 'framer-motion';
 import { skills } from '@/data/skills';
-import { useEffect } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 
-export default function SkillsScreen() {
+export default function SkillsScreen({ horizontalNavTrigger, onBack }) {
   const controls = useAnimation();
+  const [activeIndex, setActiveIndex] = useState(0);
+  const autoPlayRef = useRef(true);
 
   // Lebar card + gap
   const cardWidth = 145;
   const gap = 16;
   const step = cardWidth + gap;
 
+  const scrollTo = useCallback((index) => {
+    setActiveIndex(index);
+    controls.start({
+      x: -(index * step),
+      transition: { duration: 0.5, ease: 'easeOut' },
+    });
+  }, [controls, step]);
+
+  // Handle external horizontal nav from joystick/d-pad/keyboard
+  useEffect(() => {
+    if (!horizontalNavTrigger) return;
+    autoPlayRef.current = false;
+    if (horizontalNavTrigger.direction === 'left') {
+      setActiveIndex((prev) => {
+        const next = (prev - 1 + skills.length) % skills.length;
+        controls.start({ x: -(next * step), transition: { duration: 0.4, ease: 'easeOut' } });
+        return next;
+      });
+    } else if (horizontalNavTrigger.direction === 'right') {
+      setActiveIndex((prev) => {
+        const next = (prev + 1) % skills.length;
+        controls.start({ x: -(next * step), transition: { duration: 0.4, ease: 'easeOut' } });
+        return next;
+      });
+    }
+  }, [horizontalNavTrigger, controls, step]);
+
+  // Auto-play interval
   useEffect(() => {
     let cancelled = false;
 
-    const animateCarousel = async () => {
-      let current = 0;
-
-      while (!cancelled) {
-        // Tunggu sebelum bergerak
-        await new Promise((resolve) => setTimeout(resolve, 1800));
-
-        if (cancelled) return;
-
-        current += 1;
-
-        // Kalau sudah sampai card terakhir,
-        // kembali ke awal dengan transisi halus
-        if (current >= skills.length) {
-          current = 0;
-
-          await controls.start({
-            x: 0,
-            transition: {
-              duration: 0.7,
-              ease: 'easeInOut',
-            },
-          });
-
-          continue;
-        }
-
-        await controls.start({
-          x: -(current * step),
-          transition: {
-            duration: 1,
-            ease: 'easeInOut',
-          },
+    const timer = setInterval(() => {
+      if (cancelled || !autoPlayRef.current) return;
+      setActiveIndex((prev) => {
+        const next = (prev + 1) % skills.length;
+        controls.start({
+          x: -(next * step),
+          transition: { duration: 0.8, ease: 'easeInOut' },
         });
-      }
-    };
-
-    animateCarousel();
+        return next;
+      });
+    }, 2800);
 
     return () => {
       cancelled = true;
-      controls.stop();
+      clearInterval(timer);
     };
   }, [controls, step]);
 
@@ -279,49 +282,42 @@ export default function SkillsScreen() {
 
       {/* DOT INDICATOR */}
       <div className="flex justify-center gap-1.5 py-2">
-
-        {skills.map((skill, index) => (
-
-          <motion.span
-            key={skill.name}
-            className="w-1.5 h-1.5 rounded-full bg-[#63C8CC]/40"
-            animate={{
-              opacity: [0.35, 1, 0.35],
-              scale: [1, 1.3, 1],
-            }}
-            transition={{
-              duration: 1.8,
-              delay: index * 0.2,
-              repeat: Infinity,
-            }}
-          />
-
-        ))}
-
+        {skills.map((skill, index) => {
+          const isActive = index === activeIndex;
+          return (
+            <button
+              key={skill.name}
+              onClick={() => {
+                autoPlayRef.current = false;
+                scrollTo(index);
+              }}
+              aria-label={`Go to ${skill.name}`}
+              className={`w-2 h-2 rounded-full transition-all duration-200 cursor-pointer ${
+                isActive
+                  ? 'bg-[#F4C96B] scale-125 shadow-[0_0_8px_#F4C96B]'
+                  : 'bg-[#63C8CC]/30 hover:bg-[#63C8CC]/70'
+              }`}
+            />
+          );
+        })}
       </div>
 
-
       {/* FOOTER */}
-      <div className="
-        flex
-        justify-center
-        items-center
-        gap-4
-        border-t-2
-        border-[#63C8CC]/20
-        pt-2
-      ">
-
+      <div className="flex justify-center items-center gap-4 border-t-2 border-[#63C8CC]/20 pt-2">
         <span className="font-arcade text-[7px] sm:text-[8px] font-bold text-[#FFF3D6]/60">
-          ◀ AUTO ▶
+          ◀ ▶ BROWSE
         </span>
-
         <span className="font-arcade text-[7px] sm:text-[8px] font-bold text-[#F4C96B]">
           ● SELECT
         </span>
-
+        <button
+          onClick={onBack}
+          className="font-arcade text-[7px] sm:text-[8px] font-bold text-[#FFF3D6]/60 hover:text-[#FFF3D6] transition-colors cursor-pointer"
+        >
+          ESC BACK
+        </button>
       </div>
 
     </div>
   );
-}    
+}
