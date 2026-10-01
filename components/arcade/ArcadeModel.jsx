@@ -4,6 +4,7 @@ import { useRef, useEffect, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
+import { buildOutlines } from '@/utils/outline';
 
 const MACHINE_OFFSET = [0.9114, 0, 0.0234];
 const FLOOR_Y = -1.1;
@@ -24,6 +25,7 @@ export default function ArcadeModel({
   const clonedScene = useMemo(() => scene.clone(true), [scene]);
 
   const glowMats = useRef([]);
+  const outlineRef = useRef(null);
   const machineRef = useRef(null);
   const machineBase = useRef({ y: 0, quat: new THREE.Quaternion() });
   const wobbleQuat = useRef(new THREE.Quaternion());
@@ -48,7 +50,7 @@ export default function ArcadeModel({
     machine?.traverse((o) => o.isMesh && machineMeshes.add(o));
 
     clonedScene.traverse((child) => {
-      if (!child.isMesh) return;
+      if (!child.isMesh || child.userData.isOutline) return;
 
       // ===== Kota =====
       if (!machineMeshes.has(child)) {
@@ -102,7 +104,7 @@ export default function ArcadeModel({
     };
 
     clonedScene.traverse((child) => {
-      if (!child.isMesh || !child.material) return;
+      if (!child.isMesh || child.userData.isOutline || !child.material) return;
       const m = child.material;
 
       if (!machineMeshes.has(child)) {
@@ -158,6 +160,15 @@ export default function ArcadeModel({
       .filter(Boolean);
 
     initialButtonPos.current = buttons.current.map((btn) => btn.position.clone());
+
+    // Outline garis (pengganti Grease Pencil, yang tidak bisa diekspor ke GLB).
+    // Dibangun paling akhir supaya tidak ikut traversal material di atas.
+    const outline = buildOutlines(clonedScene);
+    outlineRef.current = outline;
+    return () => {
+      outline.dispose();
+      if (outlineRef.current === outline) outlineRef.current = null;
+    };
   }, [clonedScene, screenRef]);
 
   // Animation frame
@@ -171,6 +182,7 @@ export default function ArcadeModel({
     for (const g of glowMats.current) {
       g.mat.emissiveIntensity = THREE.MathUtils.lerp(g.light, g.dark, darkT);
     }
+    outlineRef.current?.update(state.size, darkT);
 
     // Hanya mesin yang bergerak halus; kota tetap diam.
     // (Model sudah menghadap +Z lewat rotasi 180° di dalam GLB.)
