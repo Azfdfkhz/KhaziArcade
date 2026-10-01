@@ -6,7 +6,6 @@ import { ContactShadows, Environment } from '@react-three/drei';
 import ArcadeModel from './ArcadeModel';
 import ArcadeLights from './ArcadeLights';
 import ArcadeCamera from './ArcadeCamera';
-import RoomEnvironment from './RoomEnvironment';
 import ScreenTracker from './ScreenTracker';
 
 export default function ArcadeScene({
@@ -27,12 +26,14 @@ export default function ArcadeScene({
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         style={{ background: 'transparent' }}
       >
+        {/* Langit & kabut lembut agar tepi kota menyatu dengan palet pastel */}
+        <color attach="background" args={['#D9EAE6']} />
+        <fog attach="fog" args={['#D9EAE6', 16, 42]} />
+
         <ArcadeCamera zoomedIn={zoomedIn} intro={intro} />
         <ArcadeLights />
 
         <Suspense fallback={null}>
-          <RoomEnvironment />
-
           <ArcadeModel
             zoomedIn={zoomedIn}
             joystickDir={joystickDir}
@@ -42,7 +43,7 @@ export default function ArcadeScene({
           />
 
           <ContactShadows
-            position={[0, -1.1, 0]}
+            position={[0, -1.1 + 0.09, 0]}
             opacity={0.5}
             scale={10}
             blur={2.4}

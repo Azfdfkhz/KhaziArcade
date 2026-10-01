@@ -10,7 +10,10 @@ const TAN_HALF_FOV = Math.tan(THREE.MathUtils.degToRad(FOV / 2));
 const SCREEN_Z = 0.45;
 
 const INTRO_DURATION = 3.65;
-const INTRO_START_ANGLE = -Math.PI * 1.18;
+// Kota membentuk jalan di depan mesin dan gedung tepat di belakangnya (z < -0.7).
+// Orbit lama (-1.18π) melewati belakang mesin dan menembus gedung, jadi
+// sekarang kamera menyapu dari sisi kiri jalan menuju depan mesin.
+const INTRO_START_ANGLE = -Math.PI * 0.4;
 const INTRO_END_ANGLE = -0.02;
 
 function smoothDamp(t) {

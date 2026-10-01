@@ -11,8 +11,8 @@ const stats = [
 ];
 
 const images = [
-  '/images/profile-1.jpg',
-  '/images/profile-2.jpg',
+  '/images/Profile-1.jpeg',
+  '/images/Profile-2.jpeg',
 ];
 
 export default function AboutScreen({ horizontalNavTrigger, onBack }) {
@@ -154,7 +154,7 @@ export default function AboutScreen({ horizontalNavTrigger, onBack }) {
                       className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-b from-[#237F85] to-[#15484c] text-center p-2"
                     >
                       <div className="w-14 h-14 rounded-full bg-[#18393d] border-2 border-[#63C8CC] flex items-center justify-center shadow-[0_0_12px_rgba(99,200,204,0.3)] mb-1">
-                        <span className="text-3xl">🧑‍💻</span>
+                        <span className="text-3xl">Computer</span>
                       </div>
                       <span className="font-arcade text-[8px] text-[#F4C96B] tracking-wider font-bold">
                         KHAZ
