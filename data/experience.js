@@ -28,8 +28,8 @@ export const experiences = [
     type: 'learning',
   },
   {
-    year: '2022',
-    title: 'SMK RPL',
+    year: '2024',
+    title: 'SMK Medikacom - RPL',
     place: 'Software Development',
     description: 'rekayasa perangkat lunak, algoritma pemrograman, basis data dan Game.',
     type: 'education',
