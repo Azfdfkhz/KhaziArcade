@@ -27,6 +27,7 @@ export default function ArcadeModel({
   // Clone scene so multiple instances don't clash
   const clonedScene = useMemo(() => scene.clone(true), [scene]);
 
+  const glowMats = useRef([]);
   const machineRef = useRef(null);
   const machineBase = useRef({ y: 0, quat: new THREE.Quaternion() });
   const wobbleQuat = useRef(new THREE.Quaternion());
@@ -94,6 +95,45 @@ export default function ArcadeModel({
       }
     });
 
+    // ===== Material yang menyala saat mode gelap =====
+    // Tiap entri: [terang, gelap] untuk emissiveIntensity. Material dibagikan
+    // antar mesh, jadi dedupe berdasarkan uuid.
+    const glow = new Map();
+    const addGlow = (mat, light, dark, emissiveColor) => {
+      if (!mat || glow.has(mat.uuid)) return;
+      if (emissiveColor) mat.emissive = new THREE.Color(emissiveColor);
+      glow.set(mat.uuid, { mat, light, dark });
+    };
+
+    clonedScene.traverse((child) => {
+      if (!child.isMesh || !child.material) return;
+      const m = child.material;
+
+      if (!machineMeshes.has(child)) {
+        // Kota: jendela, papan neon, dsb. yang sudah emisif -> lebih terang di malam hari
+        if (m.emissive && m.emissive.getHex() !== 0) {
+          m.userData.baseEI ??= m.emissiveIntensity;
+          addGlow(m, m.userData.baseEI, m.userData.baseEI * 1.7);
+        }
+        return;
+      }
+
+      const n = child.name;
+      if (n.includes('Screen_Glass') || n.includes('Screen_Inner_Glow')) {
+        addGlow(m, 0.35, 1.0);
+      } else if (n.includes('Marquee_Face') || n.includes('Marquee_Logo') || n.includes('Marquee_Khaz')) {
+        addGlow(m, 0.4, 1.6);
+      } else if (m.name.startsWith('MAT_ORANGE')) {
+        addGlow(m, 0, 0.9, m.color); // trim oranye, tombol, sisi samping
+      } else if (m.name.startsWith('MAT_ACCENT_YELLOW')) {
+        addGlow(m, 0, 1.0, m.color);
+      } else if (m.name.startsWith('MAT_CORAL')) {
+        m.userData.baseEI ??= m.emissiveIntensity;
+        addGlow(m, m.userData.baseEI, m.userData.baseEI * 1.25);
+      }
+    });
+    glowMats.current = [...glow.values()];
+
     // Mesh layar: dipakai ScreenTracker untuk menempelkan UI tepat di layar
     if (screenRef) {
       screenRef.current = clonedScene.getObjectByName('Screen_Inner_Glow');
@@ -129,6 +169,12 @@ export default function ArcadeModel({
     if (!groupRef.current) return;
 
     const t = state.clock.elapsedTime;
+
+    // Transisi mode gelap (0..1) dari ArcadeAtmosphere
+    const darkT = state.scene.userData.darkT ?? 0;
+    for (const g of glowMats.current) {
+      g.mat.emissiveIntensity = THREE.MathUtils.lerp(g.light, g.dark, darkT);
+    }
 
     // Hanya mesin yang bergerak halus; kota tetap diam.
     // (Model sudah menghadap +Z lewat rotasi 180° di dalam GLB.)

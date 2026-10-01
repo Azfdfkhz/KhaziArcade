@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Mode gelap dikendalikan lewat class "dark" pada <main> */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @font-face {
   font-family: 'PressStart2P';
   src: url('https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAQAu6jDQyK0nSgPJE4580w.woff2') format('woff2');

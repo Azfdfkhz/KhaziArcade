@@ -7,8 +7,11 @@ import ArcadeModel from './ArcadeModel';
 import ArcadeLights from './ArcadeLights';
 import ArcadeCamera from './ArcadeCamera';
 import ScreenTracker from './ScreenTracker';
+import ArcadeAtmosphere from './ArcadeAtmosphere';
+import ArcadeGlow from './ArcadeGlow';
 
 export default function ArcadeScene({
+  dark = false,
   zoomedIn = false,
   intro = false,
   joystickDir = 'idle',
@@ -26,9 +29,8 @@ export default function ArcadeScene({
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
         style={{ background: 'transparent' }}
       >
-        {/* Langit & kabut lembut agar tepi kota menyatu dengan palet pastel */}
-        <color attach="background" args={['#D9EAE6']} />
-        <fog attach="fog" args={['#D9EAE6', 16, 42]} />
+        {/* Langit, kabut, dan transisi tema terang/gelap */}
+        <ArcadeAtmosphere dark={dark} />
 
         <ArcadeCamera zoomedIn={zoomedIn} intro={intro} />
         <ArcadeLights />
@@ -41,6 +43,8 @@ export default function ArcadeScene({
             screenRef={screenRef}
             onPartPress={onPartPress}
           />
+
+          <ArcadeGlow />
 
           <ContactShadows
             position={[0, -1.1 + 0.09, 0]}
