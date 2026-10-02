@@ -122,13 +122,16 @@ function mergeInto(root, meshes, opts) {
  * Pasang outline ke scene hasil clone GLB.
  * @returns {{ update: (size, darkT) => void, dispose: () => void }}
  */
-export function buildOutlines(scene, { machineName = 'ARCADE_MACHINE', cityName = 'JP4_ROOT' } = {}) {
+export function buildOutlines(
+  scene,
+  { machineName = 'ARCADE_MACHINE', cityName = 'JP4_ROOT', includeCity = true } = {}
+) {
   const cfg = OUTLINE_CONFIG;
   const added = [];
   const materials = [];
 
   const machine = scene.getObjectByName(machineName);
-  const city = scene.getObjectByName(cityName);
+  const city = includeCity ? scene.getObjectByName(cityName) : null;
 
   // ===== Mesin arcade =====
   if (machine) {

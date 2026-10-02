@@ -17,6 +17,7 @@ export default function ArcadeModel({
   isButtonPressed = false,
   screenRef,
   onPartPress,
+  outlineMode = 'full', // 'full' | 'important' | 'off' (dari preset kualitas)
 }) {
   const groupRef = useRef();
   const { scene } = useGLTF('/models/arcade.glb');
@@ -160,16 +161,24 @@ export default function ArcadeModel({
       .filter(Boolean);
 
     initialButtonPos.current = buttons.current.map((btn) => btn.position.clone());
+  }, [clonedScene, screenRef]);
 
-    // Outline garis (pengganti Grease Pencil, yang tidak bisa diekspor ke GLB).
-    // Dibangun paling akhir supaya tidak ikut traversal material di atas.
-    const outline = buildOutlines(clonedScene);
+  // Outline garis (pengganti Grease Pencil, yang tidak bisa diekspor ke GLB).
+  // Effect terpisah & dideklarasikan setelah setup di atas, sehingga (1) tidak
+  // ikut traversal material, dan (2) pergantian tier kualitas hanya membangun
+  // ulang garis, bukan seluruh setup model.
+  //   full      -> mesin arcade + kota
+  //   important -> hanya mesin arcade
+  //   off       -> tanpa garis
+  useEffect(() => {
+    if (!clonedScene || outlineMode === 'off') return;
+    const outline = buildOutlines(clonedScene, { includeCity: outlineMode === 'full' });
     outlineRef.current = outline;
     return () => {
       outline.dispose();
       if (outlineRef.current === outline) outlineRef.current = null;
     };
-  }, [clonedScene, screenRef]);
+  }, [clonedScene, outlineMode]);
 
   // Animation frame
   useFrame((state) => {
